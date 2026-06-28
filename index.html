@@ -316,19 +316,15 @@ Contexte :
 Rédige un message complet, prêt à envoyer ou à dire à l'oral. Sois percutant(e), humain(e) et efficace. Pas de fioriture. Pas de "Bien sûr !" en introduction. Va droit au but.`;
 
     try {
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      const resp = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }]
-        })
+        body: JSON.stringify({ prompt })
       });
 
       if (!resp.ok) throw new Error(resp.status);
       const data = await resp.json();
-      const text = (data.content || []).map(b => b.text || "").join("");
+      const text = data.text || "";
 
       usages++;
       save();
