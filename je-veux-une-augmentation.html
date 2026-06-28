@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Je veux une augmentation 💸</title>
+  <meta name="description" content="Décris ta situation. On rédige ta demande d'augmentation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --vert: #1a6b3c; --vert-cl: #e8f5ee;
+      --noir: #0f1110; --gris: #5a5f5c; --gris-cl: #f2f4f2;
+      --or: #c8a84b; --blanc: #fafdf9; --rouge: #c0392b;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--blanc); color: var(--noir); min-height: 100vh; }
+
+    header {
+      border-bottom: 2px solid var(--noir); padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--blanc); position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: -0.03em; display: flex; align-items: center; gap: 8px; }
+    .logo-badge { background: var(--vert); color: white; font-size: 0.6rem; font-weight: 600; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; }
+    #credits-badge { font-size: 0.8rem; font-weight: 600; color: var(--gris); background: var(--gris-cl); padding: 5px 12px; border-radius: 20px; }
+    #credits-badge span { color: var(--vert); font-weight: 700; }
+
+    .hero { padding: 48px 24px 36px; max-width: 680px; margin: 0 auto; text-align: center; }
+    .hero-emoji { font-size: 3rem; display: block; margin-bottom: 16px; }
+    .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(1.8rem, 5vw, 3rem); line-height: 1.08; letter-spacing: -0.04em; margin-bottom: 14px; }
+    .hero h1 em { font-style: normal; color: var(--vert); text-decoration: underline; text-decoration-color: var(--or); text-underline-offset: 4px; }
+    .hero p { color: var(--gris); font-size: 1rem; line-height: 1.6; max-width: 500px; margin: 0 auto; }
+
+    .card { background: white; border: 2px solid var(--noir); border-radius: 16px; padding: 28px 24px; max-width: 680px; margin: 0 auto 32px; }
+    label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris); margin-bottom: 6px; }
+    input, textarea {
+      width: 100%; border: 1.5px solid #d0d5d2; border-radius: 10px;
+      padding: 11px 14px; font-family: 'Inter', sans-serif; font-size: 0.92rem;
+      color: var(--noir); background: white; transition: border-color 0.15s; outline: none; resize: vertical;
+    }
+    input:focus, textarea:focus { border-color: var(--vert); box-shadow: 0 0 0 3px var(--vert-cl); }
+    textarea { min-height: 96px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .field-full { margin-bottom: 14px; }
+    @media(max-width:520px){ .field-row { grid-template-columns: 1fr; } }
+
+    .tone-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris); margin-bottom: 10px; }
+    .tones { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+    .tone-pill {
+      padding: 7px 15px; border-radius: 30px; border: 1.5px solid #d0d5d2;
+      font-size: 0.82rem; font-weight: 500; cursor: pointer; background: white;
+      transition: all 0.15s; color: var(--noir); font-family: 'Inter', sans-serif;
+    }
+    .tone-pill:hover { border-color: var(--vert); color: var(--vert); }
+    .tone-pill.active { background: var(--vert); border-color: var(--vert); color: white; font-weight: 600; }
+
+    .btn-main {
+      width: 100%; padding: 15px; background: var(--noir); color: white; border: none;
+      border-radius: 12px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+      cursor: pointer; transition: background 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-main:hover { background: var(--vert); transform: translateY(-1px); }
+    .btn-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .spinner { display: inline-block; width: 17px; height: 17px; border: 2px solid rgba(255,255,255,0.35); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg { background: #fdf0ee; border: 1.5px solid var(--rouge); border-radius: 10px; padding: 11px 15px; font-size: 0.87rem; color: var(--rouge); margin-top: 12px; }
+    .free-counter { text-align: center; font-size: 0.82rem; color: var(--gris); margin-bottom: 16px; }
+    .free-counter strong { color: var(--noir); }
+
+    /* EMAIL GATE */
+    .email-gate { background: white; border: 2px solid var(--noir); border-radius: 16px; padding: 36px 24px; max-width: 680px; margin: 0 auto 32px; text-align: center; }
+    .email-gate h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; margin-bottom: 10px; }
+    .email-gate p { color: var(--gris); font-size: 0.93rem; line-height: 1.6; margin-bottom: 22px; }
+    .email-input-row { display: flex; gap: 10px; max-width: 420px; margin: 0 auto; }
+    .email-input-row input { flex: 1; }
+    @media(max-width:480px){ .email-input-row { flex-direction: column; } }
+    .btn-email { padding: 11px 20px; background: var(--vert); color: white; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
+    .btn-email:hover { opacity: 0.88; }
+    .email-note { font-size: 0.75rem; color: #9aa09c; margin-top: 10px; }
+
+    /* PAYWALL */
+    .paywall { border: 2px solid var(--or); border-radius: 16px; padding: 32px 24px; text-align: center; background: #fffdf4; max-width: 680px; margin: 0 auto 32px; }
+    .paywall h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; margin-bottom: 10px; }
+    .paywall p { color: var(--gris); font-size: 0.93rem; line-height: 1.6; margin-bottom: 18px; }
+    .price-block { font-family: 'Syne', sans-serif; font-size: 2.6rem; font-weight: 800; color: var(--vert); margin-bottom: 4px; }
+    .price-block small { font-size: 1rem; font-weight: 500; color: var(--gris); font-family: 'Inter', sans-serif; }
+    .perks { list-style: none; margin: 14px auto 22px; text-align: left; display: inline-block; }
+    .perks li { font-size: 0.9rem; padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+    .perks li::before { content: "✓"; color: var(--vert); font-weight: 700; }
+    .btn-stripe {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 15px; background: var(--or); color: var(--noir); border: none;
+      border-radius: 12px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+      cursor: pointer; text-decoration: none; transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-stripe:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* RESULT */
+    .result-card { background: white; border: 2px solid var(--vert); border-radius: 16px; padding: 28px 24px; max-width: 680px; margin: 0 auto 32px; }
+    .result-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--vert); margin-bottom: 14px; }
+    .result-text { font-size: 0.93rem; line-height: 1.78; color: var(--noir); white-space: pre-wrap; }
+    .result-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .btn-copy { padding: 9px 18px; border: 1.5px solid var(--vert); border-radius: 8px; background: white; color: var(--vert); font-weight: 600; font-size: 0.84rem; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+    .btn-copy:hover { background: var(--vert-cl); }
+    .btn-retry { padding: 9px 18px; border: 1.5px solid #d0d5d2; border-radius: 8px; background: white; color: var(--gris); font-weight: 600; font-size: 0.84rem; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+    .btn-retry:hover { border-color: var(--gris); color: var(--noir); }
+
+    footer { border-top: 1px solid #e0e5e2; text-align: center; padding: 24px; font-size: 0.77rem; color: #9aa09c; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">💸 Je veux une augmentation <span class="logo-badge">par Hélène</span></div>
+  <div id="credits-badge"><span id="credits-count">3</span> essais gratuits</div>
+</header>
+
+<div class="hero">
+  <span class="hero-emoji">✊</span>
+  <h1>Ton pouvoir d'achat<br/><em>mérite mieux</em></h1>
+  <p>Décris ta situation. On rédige ta demande d'augmentation — percutante, professionnelle, prête à envoyer.</p>
+</div>
+
+<!-- EMAIL GATE -->
+<div class="email-gate" id="email-section">
+  <h2>3 essais gratuits</h2>
+  <p>Entre ton email pour accéder à l'outil. Aucune carte bleue demandée.</p>
+  <div class="email-input-row">
+    <input type="email" id="user-email" placeholder="ton@email.fr" />
+    <button class="btn-email" id="btn-email">C'est parti →</button>
+  </div>
+  <div id="email-error" class="error-msg hidden" style="max-width:420px;margin:10px auto 0;text-align:left"></div>
+  <p class="email-note">Pas de spam. Juste l'outil.</p>
+</div>
+
+<!-- FREE COUNTER -->
+<div class="free-counter hidden" id="counter-msg"></div>
+
+<!-- FORM -->
+<div class="card hidden" id="form-section">
+  <div class="field-row">
+    <div>
+      <label>Ton poste *</label>
+      <input id="poste" placeholder="Ex : Chargé de projet digital" />
+    </div>
+    <div>
+      <label>Ancienneté</label>
+      <input id="anciennete" placeholder="Ex : 3 ans dans l'entreprise" />
+    </div>
+  </div>
+  <div class="field-full">
+    <label>Salaire actuel (facultatif)</label>
+    <input id="salaire" placeholder="Ex : 38 000 €" />
+  </div>
+  <div class="field-full">
+    <label>Tes arguments *</label>
+    <textarea id="arguments" placeholder="Ex : J'ai géré seul(e) la refonte du site, on m'a confié 2 nouveaux clients, mes objectifs sont dépassés de 20%..."></textarea>
+  </div>
+
+  <div class="tone-label">Choisis ton ton</div>
+  <div class="tones" id="tones">
+    <button class="tone-pill active" data-tone="diplomatique">🤝 Diplomatique</button>
+    <button class="tone-pill" data-tone="confiant">💪 Confiant</button>
+    <button class="tone-pill" data-tone="argumente">📊 Argumenté</button>
+    <button class="tone-pill" data-tone="assertif">🔥 Assertif</button>
+    <button class="tone-pill" data-tone="strategique">♟️ Stratégique</button>
+  </div>
+
+  <div id="error-msg" class="error-msg hidden"></div>
+  <button class="btn-main" id="btn-generate">✍️ Rédige ma demande</button>
+</div>
+
+<!-- PAYWALL -->
+<div class="paywall hidden" id="paywall-section">
+  <div style="font-size:2.5rem;margin-bottom:12px">🔒</div>
+  <h2>Tes 3 essais gratuits sont épuisés</h2>
+  <p>Débloque l'accès complet — une seule fois, pour toujours.</p>
+  <div class="price-block">9,90 € <small>accès à vie</small></div>
+  <ul class="perks">
+    <li>Générations illimitées</li>
+    <li>5 tons disponibles</li>
+    <li>Résultats copiables en 1 clic</li>
+    <li>Paiement unique, aucun abonnement</li>
+  </ul>
+  <a class="btn-stripe" id="stripe-link" href="https://buy.stripe.com/REMPLACE_PAR_TON_LIEN" target="_blank" rel="noopener">
+    💳 Débloquer pour 9,90 €
+  </a>
+  <div style="margin-top:16px">
+    <button onclick="simulateSubscribe()" style="font-size:0.73rem;color:#9aa09c;background:none;border:none;cursor:pointer;text-decoration:underline">[DEV] Simuler accès débloqué</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="result-card hidden" id="result-section">
+  <div class="result-label" id="result-label">✅ Ta demande</div>
+  <div class="result-text" id="result-text"></div>
+  <div class="result-actions">
+    <button class="btn-copy" id="btn-copy">📋 Copier</button>
+    <button class="btn-retry" onclick="resetForm()">↩ Modifier ma situation</button>
+  </div>
+</div>
+
+<footer>Fait avec ✊ par Hélène Martin — 2025</footer>
+
+<script>
+  const MAX_FREE = 3;
+  const STRIPE_LINK = "https://buy.stripe.com/REMPLACE_PAR_TON_LIEN";
+
+  let selectedTone = "diplomatique";
+  let usages = parseInt(localStorage.getItem("jva_usages") || "0");
+  let unlocked = localStorage.getItem("jva_unlocked") === "true";
+  let emailSaved = localStorage.getItem("jva_email") || "";
+
+  function save() { localStorage.setItem("jva_usages", usages); }
+
+  function updateBadge() {
+    const remaining = Math.max(0, MAX_FREE - usages);
+    const badge = document.getElementById("credits-badge");
+    if (unlocked) {
+      badge.innerHTML = "✅ Accès illimité";
+    } else {
+      badge.innerHTML = `<span>${remaining}</span> essai${remaining > 1 ? "s" : ""} gratuit${remaining > 1 ? "s" : ""}`;
+    }
+  }
+
+  function updateCounter() {
+    const remaining = Math.max(0, MAX_FREE - usages);
+    const el = document.getElementById("counter-msg");
+    if (!unlocked && remaining > 0 && remaining < MAX_FREE) {
+      el.classList.remove("hidden");
+      el.innerHTML = `Il te reste <strong>${remaining} génération${remaining > 1 ? "s" : ""} gratuite${remaining > 1 ? "s" : ""}</strong>`;
+    } else {
+      el.classList.add("hidden");
+    }
+  }
+
+  function showSection(id) {
+    ["email-section","form-section","paywall-section","result-section"].forEach(s => {
+      document.getElementById(s).classList.add("hidden");
+    });
+    document.getElementById(id).classList.remove("hidden");
+  }
+
+  function checkState() {
+    if (!emailSaved) {
+      showSection("email-section");
+    } else if (!unlocked && usages >= MAX_FREE) {
+      showSection("paywall-section");
+    } else {
+      showSection("form-section");
+      updateCounter();
+    }
+  }
+
+  // Email gate
+  document.getElementById("btn-email").addEventListener("click", () => {
+    const email = document.getElementById("user-email").value.trim();
+    const errEl = document.getElementById("email-error");
+    if (!email || !email.includes("@")) {
+      errEl.textContent = "⚠️ Saisis un email valide.";
+      errEl.classList.remove("hidden");
+      return;
+    }
+    errEl.classList.add("hidden");
+    emailSaved = email;
+    localStorage.setItem("jva_email", email);
+    checkState();
+    updateBadge();
+  });
+
+  // Tone pills
+  document.querySelectorAll(".tone-pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tone-pill").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedTone = btn.dataset.tone;
+    });
+  });
+
+  // Generate
+  document.getElementById("btn-generate").addEventListener("click", async () => {
+    const poste = document.getElementById("poste").value.trim();
+    const anciennete = document.getElementById("anciennete").value.trim();
+    const salaire = document.getElementById("salaire").value.trim();
+    const args = document.getElementById("arguments").value.trim();
+    const errorEl = document.getElementById("error-msg");
+
+    errorEl.classList.add("hidden");
+    if (!poste) { showError("Indique ton poste."); return; }
+    if (!args)  { showError("Donne au moins un argument."); return; }
+
+    const btn = document.getElementById("btn-generate");
+    btn.disabled = true;
+    btn.innerHTML = `<div class="spinner"></div> Rédaction en cours…`;
+
+    const toneLabels = {
+      diplomatique: "🤝 Diplomatique", confiant: "💪 Confiant",
+      argumente: "📊 Argumenté", assertif: "🔥 Assertif", strategique: "♟️ Stratégique"
+    };
+
+    const prompt = `Tu es un coach expert en négociation salariale.
+Génère un email ou discours professionnel pour demander une augmentation.
+
+Contexte :
+- Poste : ${poste}
+- Ancienneté : ${anciennete || "non précisée"}
+- Salaire actuel : ${salaire || "non précisé"}
+- Arguments : ${args}
+- Ton souhaité : ${toneLabels[selectedTone]}
+
+Rédige un message complet, prêt à envoyer ou à dire à l'oral. Sois percutant(e), humain(e) et efficace. Pas de fioriture. Pas de "Bien sûr !" en introduction. Va droit au but.`;
+
+    try {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      if (!resp.ok) throw new Error(resp.status);
+      const data = await resp.json();
+      const text = (data.content || []).map(b => b.text || "").join("");
+
+      usages++;
+      save();
+      updateBadge();
+      updateCounter();
+
+      document.getElementById("result-label").textContent = `✅ Ta demande — ton ${toneLabels[selectedTone]}`;
+      document.getElementById("result-text").textContent = text;
+      showSection("result-section");
+
+    } catch(e) {
+      showError("Une erreur est survenue. Réessaie dans quelques secondes.");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "✍️ Rédige ma demande";
+    }
+  });
+
+  // Copy
+  document.getElementById("btn-copy").addEventListener("click", function() {
+    const text = document.getElementById("result-text").textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      this.textContent = "✓ Copié !";
+      setTimeout(() => { this.textContent = "📋 Copier"; }, 2000);
+    });
+  });
+
+  function resetForm() {
+    checkState();
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("error-msg");
+    el.textContent = "⚠️ " + msg;
+    el.classList.remove("hidden");
+  }
+
+  function simulateSubscribe() {
+    unlocked = true;
+    localStorage.setItem("jva_unlocked", "true");
+    updateBadge();
+    checkState();
+  }
+
+  // Init
+  updateBadge();
+  checkState();
+</script>
+</body>
+</html>
